@@ -14,8 +14,12 @@ export const EmbedCodeModal: React.FC<EmbedCodeModalProps> = ({ isOpen, onClose,
 
   if (!isOpen) return null;
 
-  const scriptCode = `<!-- Script Publicitaire Partenaire (Afders Network) -->
-<script data-cfasync="false" src="https://afders.org/1/5d039403107b0bce60bdf1a7557f2500"></script>`;
+  const scriptCode = `<!-- 1. Script Régie Afders -->
+<script data-cfasync="false" src="https://afders.org/1/5d039403107b0bce60bdf1a7557f2500"></script>
+
+<!-- 2. Script & Conteneur Régie Bicea -->
+<script async="async" data-cfasync="false" src="https://bicea.org/21/a39b1655f5d12a1ad801c327f3ae2816"></script>
+<div id="container-a39b1655f5d12a1ad801c327f3ae2816"></div>`;
 
   const ad1 = ads[0] || {
     shortUrl: 'https://pin.it/6we2QA6V0',

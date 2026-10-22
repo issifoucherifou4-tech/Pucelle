@@ -12,6 +12,7 @@ import { AddAdModal } from './components/AddAdModal';
 import { AdDetailModal } from './components/AdDetailModal';
 import { EmbedCodeModal } from './components/EmbedCodeModal';
 import { FloatingAdBanner } from './components/FloatingAdBanner';
+import { BiceaAdBanner } from './components/BiceaAdBanner';
 import { Toast } from './components/Toast';
 import { INITIAL_ADS } from './data/defaultAds';
 import { AdCampaign } from './types/ad';
@@ -111,6 +112,9 @@ export default function App() {
             onCopyLink={handleCopyLink}
           />
         )}
+
+        {/* Section: Partner Ad Banner Container (Bicea Network) */}
+        <BiceaAdBanner />
 
         {/* Section 2: Full Ads Grid & Catalog */}
         <AdGrid
