@@ -1,0 +1,6 @@
+{
+  "name": "Vogue & Street - Showcase Mode & Publicités",
+  "description": "Portail tendance et plateforme d'affichage publicitaire intégrant vos campagnes Pinterest et partenariats sponsorisés.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

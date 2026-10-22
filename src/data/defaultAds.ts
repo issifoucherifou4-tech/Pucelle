@@ -1,0 +1,50 @@
+import { AdCampaign } from '../types/ad';
+
+export const INITIAL_ADS: AdCampaign[] = [
+  {
+    id: 'ad-pin-6we2QA6V0',
+    pinId: '585819864065752974',
+    shortUrl: 'https://pin.it/6we2QA6V0',
+    directUrl: 'https://www.pinterest.com/pin/585819864065752974/',
+    title: 'Lit Outfits & Robes Glamour',
+    subtitle: 'Collection Sublime Courbes & Silhouette Afro-Chic',
+    description: 'Campagne publicitaire Pinterest exclusive mettant en valeur des créations de robes moulantes élégantes, coupes glamour et inspirations afro-urbaines contemporaines.',
+    imageUrl: 'https://i.pinimg.com/736x/9e/ed/a5/9eeda59b83c9d275e542b20b7995a10d.jpg',
+    videoUrl: '/videos/video_lit_outfits_1min.mp4',
+    videoHlsUrl: 'https://v1.pinimg.com/videos/iht/hls/6b/1a/08/6b1a08c848d00e1f20a726a833af5584.m3u8',
+    category: 'fashion',
+    categoryLabel: 'Mode & Robes',
+    advertiser: 'Lit Outfits Studio',
+    tags: ['Robes Moulantes', 'Big Women Fashion', 'Afro-Chic', 'Glamour', 'Lookbook Tendance'],
+    clicks: 142,
+    impressions: 2840,
+    featured: true,
+    active: true,
+    createdAt: '2026-10-22',
+    ctaText: 'Découvrir la tenue sur Pinterest',
+    badgeText: 'Vidéo HD · 1:00 min'
+  },
+  {
+    id: 'ad-pin-54XZm9QiJ',
+    pinId: '1122663013410046317',
+    shortUrl: 'https://pin.it/54XZm9QiJ',
+    directUrl: 'https://www.pinterest.com/pin/1122663013410046317/',
+    title: 'PIPY TIDA Streetwear & Casquettes',
+    subtitle: 'Look Face Caps, Dreads & Urban Street Style',
+    description: 'Campagne publicitaire Pinterest dédiée à la culture urbaine : casquettes face caps stylisées, finitions dreadlocks soignées et attitude streetwear moderne.',
+    imageUrl: 'https://i.pinimg.com/736x/30/7f/50/307f50d89f9f786178a18b8d623b16dd.jpg',
+    videoUrl: '/videos/video_pipy_tida_1min.mp4',
+    videoHlsUrl: 'https://v1.pinimg.com/videos/iht/hls/62/7b/b8/627bb85527f3f961b885461ffa3f4e29.m3u8',
+    category: 'streetwear',
+    categoryLabel: 'Streetwear & Caps',
+    advertiser: 'PIPY TIDA Official',
+    tags: ['Face Caps', 'Dreads Style', 'Streetwear Noir', 'Casquettes', 'Mode Urbaine'],
+    clicks: 189,
+    impressions: 3410,
+    featured: true,
+    active: true,
+    createdAt: '2026-10-22',
+    ctaText: 'Explorer le style sur Pinterest',
+    badgeText: 'Annonce Sponsorisée #2'
+  }
+];
