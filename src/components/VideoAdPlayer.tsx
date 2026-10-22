@@ -18,6 +18,9 @@ interface VideoAdPlayerProps {
   onCopyLink: (url: string) => void;
   autoPlayWithSound?: boolean;
   hideTextOverlay?: boolean;
+  isAudioActive?: boolean;
+  onActivateAudio?: () => void;
+  onDeactivateAudio?: () => void;
 }
 
 export const VideoAdPlayer: React.FC<VideoAdPlayerProps> = ({
@@ -27,17 +30,33 @@ export const VideoAdPlayer: React.FC<VideoAdPlayerProps> = ({
   onCopyLink,
   autoPlayWithSound = true,
   hideTextOverlay = false,
+  isAudioActive,
+  onActivateAudio,
+  onDeactivateAudio,
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [isPlaying, setIsPlaying] = useState(true);
-  const [isMuted, setIsMuted] = useState(false);
+  const [internalMuted, setInternalMuted] = useState(false);
   const [volume, setVolume] = useState(1);
   const [brightness, setBrightness] = useState<number>(1.25); // +25% default boosted brightness
   const [progress, setProgress] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(60); // 1 minute = 60 seconds
+
+  // Effective muted state: if controlled by isAudioActive prop, audio is active only when isAudioActive === true
+  const isMuted = isAudioActive !== undefined ? !isAudioActive : internalMuted;
+
+  // Sync video.muted whenever isMuted changes
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    video.muted = isMuted;
+    if (!isMuted) {
+      video.volume = volume;
+    }
+  }, [isMuted, volume]);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -48,35 +67,37 @@ export const VideoAdPlayer: React.FC<VideoAdPlayerProps> = ({
       setDuration(video.duration);
     }
 
-    // Try unmuted autoplay with music first
-    video.muted = false;
+    video.muted = isMuted;
     const playPromise = video.play();
     if (playPromise !== undefined) {
       playPromise
         .then(() => {
           setIsPlaying(true);
-          setIsMuted(false);
         })
         .catch(() => {
+          // If browser policy blocks unmuted autoplay, mute and continue playing video
           video.muted = true;
-          setIsMuted(true);
+          setInternalMuted(true);
+          onDeactivateAudio?.();
           video.play().catch(() => setIsPlaying(false));
         });
     }
   }, [ad.videoUrl]);
 
+  // Start video and activate the single shared sound
   const playVideoAndMusic = (e?: React.MouseEvent) => {
     e?.stopPropagation();
     const video = videoRef.current;
     if (!video) return;
 
+    onActivateAudio?.();
+    setInternalMuted(false);
     video.muted = false;
     video.volume = 1.0;
-    setIsMuted(false);
     setVolume(1.0);
     video.play().then(() => {
       setIsPlaying(true);
-    }).catch((err) => console.log('Playback error:', err));
+    }).catch(() => {});
   };
 
   const togglePlay = () => {
@@ -96,16 +117,22 @@ export const VideoAdPlayer: React.FC<VideoAdPlayerProps> = ({
     const video = videoRef.current;
     if (!video) return;
 
-    const nextMuted = !video.muted;
-    video.muted = nextMuted;
-    setIsMuted(nextMuted);
-    if (!nextMuted) {
+    if (isMuted) {
+      // Unmute this video and make it the ONLY active audio
+      onActivateAudio?.();
+      setInternalMuted(false);
+      video.muted = false;
       video.volume = 1.0;
       setVolume(1.0);
       if (video.paused) {
         video.play().catch(() => {});
         setIsPlaying(true);
       }
+    } else {
+      // Mute this video
+      onDeactivateAudio?.();
+      setInternalMuted(true);
+      video.muted = true;
     }
   };
 
@@ -116,12 +143,14 @@ export const VideoAdPlayer: React.FC<VideoAdPlayerProps> = ({
     const video = videoRef.current;
     if (video) {
       video.volume = newVol;
-      if (newVol > 0 && video.muted) {
+      if (newVol > 0 && isMuted) {
+        onActivateAudio?.();
+        setInternalMuted(false);
         video.muted = false;
-        setIsMuted(false);
       } else if (newVol === 0) {
+        onDeactivateAudio?.();
+        setInternalMuted(true);
         video.muted = true;
-        setIsMuted(true);
       }
     }
   };
@@ -228,7 +257,7 @@ export const VideoAdPlayer: React.FC<VideoAdPlayerProps> = ({
               className="w-full py-2.5 px-4 bg-amber-400 hover:bg-amber-300 text-neutral-950 font-bold rounded-xl shadow-xl flex items-center justify-center gap-2 text-xs transition-transform active:scale-95 animate-pulse"
             >
               <Music className="w-4 h-4 fill-neutral-950" />
-              <span>🔊 Cliquez ici pour lancer la Musique !</span>
+              <span>🔊 Cliquez pour activer le son unique</span>
             </button>
           </div>
         )}
@@ -266,10 +295,10 @@ export const VideoAdPlayer: React.FC<VideoAdPlayerProps> = ({
               onClick={toggleMute}
               className={`p-2 rounded-full backdrop-blur-md border border-white/15 transition-all ${
                 isMuted
-                  ? 'bg-red-500/80 text-white hover:bg-red-600'
-                  : 'bg-emerald-500/90 text-white hover:bg-emerald-600'
+                  ? 'bg-neutral-900/80 text-neutral-400 hover:text-white'
+                  : 'bg-emerald-500/90 text-white hover:bg-emerald-600 shadow-lg'
               }`}
-              title={isMuted ? 'Activer le son' : 'Couper le son'}
+              title={isMuted ? 'Activer le son unique' : 'Couper le son'}
             >
               {isMuted ? (
                 <VolumeX className="w-4 h-4" />
@@ -333,10 +362,10 @@ export const VideoAdPlayer: React.FC<VideoAdPlayerProps> = ({
                 <button
                   onClick={toggleMute}
                   className="text-neutral-400 hover:text-white"
-                  title="Son"
+                  title="Son unique"
                 >
                   {isMuted || volume === 0 ? (
-                    <VolumeX className="w-3.5 h-3.5 text-red-400" />
+                    <VolumeX className="w-3.5 h-3.5 text-neutral-400" />
                   ) : (
                     <Volume2 className="w-3.5 h-3.5 text-emerald-400" />
                   )}

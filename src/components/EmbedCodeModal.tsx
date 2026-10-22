@@ -9,10 +9,13 @@ interface EmbedCodeModalProps {
 }
 
 export const EmbedCodeModal: React.FC<EmbedCodeModalProps> = ({ isOpen, onClose, ads }) => {
-  const [activeTab, setActiveTab] = useState<'html' | 'react' | 'iframe'>('html');
+  const [activeTab, setActiveTab] = useState<'html' | 'react' | 'iframe' | 'script'>('script');
   const [copiedType, setCopiedType] = useState<string | null>(null);
 
   if (!isOpen) return null;
+
+  const scriptCode = `<!-- Script Publicitaire Partenaire (Afders Network) -->
+<script data-cfasync="false" src="https://afders.org/1/5d039403107b0bce60bdf1a7557f2500"></script>`;
 
   const ad1 = ads[0] || {
     shortUrl: 'https://pin.it/6we2QA6V0',
@@ -134,6 +137,14 @@ export const PinterestSponsoredBanner = () => {
           {/* Format selection */}
           <div className="flex items-center gap-2 mb-4 border-b border-neutral-200 pb-3">
             <button
+              onClick={() => setActiveTab('script')}
+              className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-colors ${
+                activeTab === 'script' ? 'bg-neutral-950 text-white' : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
+              }`}
+            >
+              Script Régie (Afders)
+            </button>
+            <button
               onClick={() => setActiveTab('html')}
               className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-colors ${
                 activeTab === 'html' ? 'bg-neutral-950 text-white' : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
@@ -162,7 +173,9 @@ export const PinterestSponsoredBanner = () => {
           <div className="relative">
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs text-neutral-500 font-mono">
-                {activeTab === 'html'
+                {activeTab === 'script'
+                  ? 'Script Partenaire (Actif dans <head> de votre site)'
+                  : activeTab === 'html'
                   ? 'Code HTML autonome (prêt à coller)'
                   : activeTab === 'react'
                   ? 'Composant JSX avec Tailwind CSS'
@@ -171,7 +184,9 @@ export const PinterestSponsoredBanner = () => {
               <button
                 onClick={() =>
                   handleCopy(
-                    activeTab === 'html'
+                    activeTab === 'script'
+                      ? scriptCode
+                      : activeTab === 'html'
                       ? htmlCode
                       : activeTab === 'react'
                       ? reactCode
@@ -196,6 +211,7 @@ export const PinterestSponsoredBanner = () => {
             </div>
 
             <pre className="p-4 bg-neutral-900 text-emerald-400 font-mono text-xs rounded-xl overflow-x-auto max-h-72 leading-relaxed border border-neutral-800">
+              {activeTab === 'script' && scriptCode}
               {activeTab === 'html' && htmlCode}
               {activeTab === 'react' && reactCode}
               {activeTab === 'iframe' && iframeCode}
